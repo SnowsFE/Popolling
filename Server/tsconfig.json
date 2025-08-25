@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    /* 파일 구조 */
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    /* Node.js 환경 설정 */
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    /* 타입스크립트 보강 */
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
