@@ -6,13 +6,16 @@ import {
   editPopolling,
   removePopolling,
 } from "../controllers/popollingController";
+import { requireAuth } from "../middlewares/requireAuth";
 
 const router = Router();
 
 router.get("/", getPopollings);
-router.post("/", createPopolling);
 router.get("/:id", getPopolling);
-router.put("/:id", editPopolling);
-router.delete("/:id", removePopolling);
+
+// 인증 필요
+router.post("/", requireAuth, createPopolling);
+router.put("/:id", requireAuth, editPopolling);
+router.delete("/:id", requireAuth, removePopolling);
 
 export default router;

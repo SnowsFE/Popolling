@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
-    /* ÆÄÀÏ ±¸Á¶ */
+    /* íŒŒì¼ êµ¬ì¡° */
     "rootDir": "./src",
     "outDir": "./dist",
 
-    /* Node.js È¯°æ ¼³Á¤ */
+    /* Node.js í™˜ê²½ ì„¤ì • */
     "target": "ES2020",
     "module": "CommonJS",
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
 
-    /* Å¸ÀÔ½ºÅ©¸³Æ® º¸°­ */
+    /* íƒ€ì…ìŠ¤í¬ë¦½íŠ¸ ë³´ê°• */
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
