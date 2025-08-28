@@ -1,0 +1,162 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum NotificationType {
+  like
+  comment
+  vote
+  bookmark
+  follow
+  collaborate
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // gamification
+  level     Int       @default(1)
+  badges    Json?
+
+  portfolios     Portfolio[]
+  likes          Like[]
+  comments       Comment[]
+  votes          Vote[]
+  bookmarks      Bookmark[]
+  followers      Follow[] @relation("followers")
+  following      Follow[] @relation("following")
+  notifications  Notification[]
+  collaborations CollaborationRequest[]
+}
+
+model Portfolio {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  title        String
+  description  String?
+  techStack    Json?
+  link         String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  viewCount    Int       @default(0)
+  feedbackFocus String?
+
+  user        User          @relation(fields: [userId], references: [id])
+  likes       Like[]
+  comments    Comment[]
+  votes       Vote[]
+  bookmarks   Bookmark[]
+  tags        PortfolioTag[]
+  collaborations CollaborationRequest[]
+}
+
+model Like {
+  id          Int       @id @default(autoincrement())
+  portfolioId Int
+  userId      Int
+  createdAt   DateTime  @default(now())
+
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@unique([portfolioId, userId])
+}
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  portfolioId Int
+  userId      Int
+  content     String
+  createdAt   DateTime  @default(now())
+
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+model Vote {
+  id          Int       @id @default(autoincrement())
+  portfolioId Int
+  userId      Int
+  design      Int       @default(0) // 0~5
+  tech        Int       @default(0)
+  impact      Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@unique([portfolioId, userId])
+}
+
+model Bookmark {
+  id          Int       @id @default(autoincrement())
+  portfolioId Int
+  userId      Int
+  createdAt   DateTime  @default(now())
+
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@unique([portfolioId, userId])
+}
+
+model Follow {
+  id          Int       @id @default(autoincrement())
+  followerId  Int
+  followingId Int
+  createdAt   DateTime  @default(now())
+
+  follower    User      @relation("followers", fields: [followerId], references: [id])
+  following   User      @relation("following", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+}
+
+model Tag {
+  id         Int            @id @default(autoincrement())
+  name       String         @unique
+  portfolios PortfolioTag[]
+}
+
+model PortfolioTag {
+  portfolioId Int
+  tagId       Int
+
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  tag         Tag       @relation(fields: [tagId], references: [id])
+
+  @@id([portfolioId, tagId])
+}
+
+model CollaborationRequest {
+  id          Int       @id @default(autoincrement())
+  portfolioId Int
+  userId      Int       // who requested
+  createdAt   DateTime  @default(now())
+
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@unique([portfolioId, userId])
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  type      NotificationType
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id])
+}
