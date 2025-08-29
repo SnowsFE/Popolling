@@ -24,7 +24,6 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  // gamification
   level     Int       @default(1)
   badges    Json?
 
@@ -58,6 +57,17 @@ model Portfolio {
   bookmarks   Bookmark[]
   tags        PortfolioTag[]
   collaborations CollaborationRequest[]
+
+  images        PortfolioImage[]
+}
+
+model PortfolioImage {
+  id          Int        @id @default(autoincrement())
+  portfolioId Int
+  url         String
+  createdAt   DateTime   @default(now())
+
+  portfolio   Portfolio  @relation(fields: [portfolioId], references: [id])
 }
 
 model Like {
@@ -141,7 +151,7 @@ model PortfolioTag {
 model CollaborationRequest {
   id          Int       @id @default(autoincrement())
   portfolioId Int
-  userId      Int       // who requested
+  userId      Int
   createdAt   DateTime  @default(now())
 
   portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
