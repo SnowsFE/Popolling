@@ -39,35 +39,35 @@ model User {
 }
 
 model Portfolio {
-  id           Int       @id @default(autoincrement())
-  userId       Int
-  title        String
-  description  String?
-  techStack    Json?
-  link         String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  viewCount    Int       @default(0)
+  id            Int              @id @default(autoincrement())
+  userId        Int
+  title         String
+  description   String?
+  techStack     Json?
+  link          String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  viewCount     Int              @default(0)
   feedbackFocus String?
 
-  user        User          @relation(fields: [userId], references: [id])
-  likes       Like[]
-  comments    Comment[]
-  votes       Vote[]
-  bookmarks   Bookmark[]
-  tags        PortfolioTag[]
+  user          User             @relation(fields: [userId], references: [id])
+  likes         Like[]
+  comments      Comment[]
+  votes         Vote[]
+  bookmarks     Bookmark[]
+  tags          PortfolioTag[]
   collaborations CollaborationRequest[]
 
   images        PortfolioImage[]
 }
 
 model PortfolioImage {
-  id          Int        @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   portfolioId Int
   url         String
-  createdAt   DateTime   @default(now())
+  createdAt   DateTime  @default(now())
 
-  portfolio   Portfolio  @relation(fields: [portfolioId], references: [id])
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
 }
 
 model Like {
@@ -97,7 +97,7 @@ model Vote {
   id          Int       @id @default(autoincrement())
   portfolioId Int
   userId      Int
-  design      Int       @default(0) // 0~5
+  design      Int       @default(0)
   tech        Int       @default(0)
   impact      Int       @default(0)
   createdAt   DateTime  @default(now())
