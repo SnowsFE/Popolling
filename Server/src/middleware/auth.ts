@@ -9,7 +9,11 @@ declare global {
   }
 }
 
-export function authRequired(req: Request, res: Response, next: NextFunction) {
+export async function authRequired(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const header = req.headers.authorization;
   const token = header?.startsWith("Bearer ") ? header.slice(7) : null;
 
@@ -18,21 +22,21 @@ export function authRequired(req: Request, res: Response, next: NextFunction) {
       req.user = verifyAccess(token);
       return next();
     } catch {
-      /* fall through to refresh */
+      // fallthrough to refresh flow
     }
   }
 
-  // access 만료 시 refresh 쿠키로 재발급
-  const refresh = req.cookies?.refresh_token;
+  const refresh = req.cookies?.refresh_token as string | undefined;
   if (!refresh) return res.status(401).json({ message: "Unauthorized" });
 
   try {
     const payload = verifyRefresh(refresh);
-    const access = setTokens(res, payload); // refresh 재설정 + access 새로 발급
+    // 새 access 발급 (cookie는 유지)
+    const newAccess = setTokens(res, payload);
+    // 새 토큰은 헤더에 실어주므로 프론트는 X-Access-Token 확인
+    res.setHeader("X-Access-Token", newAccess);
     req.user = payload;
-    // 새 access 토큰을 헤더로 내려줘서 클라이언트가 교체하도록
-    res.setHeader("X-Access-Token", access);
-    next();
+    return next();
   } catch {
     return res.status(401).json({ message: "Unauthorized" });
   }
